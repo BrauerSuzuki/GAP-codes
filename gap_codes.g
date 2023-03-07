@@ -61,15 +61,6 @@ local F,H;
 	return IdStandardPresented512Group(H);
 end;
 
-#the pairs (a,b) such that PrimitiveGroup(a,b) is a sporadic transitive linear group of degree b (appearing in Hering's classification)
-SporLinGroups:=[[25,15],[25,18],[25,19],[49,25],[49,29],[121,39],[121,42],[121,56],[121,57],[19^2,86],[23^2,59],[29^2,106],[29^2,110],[59^2,84],[16,20],[81,71],[81,90],[81,99],[81,130],[81,129],[81,124],[81,126],[81,127],[81,128],[3^6,396]];
-
-#orders <2000 of non-solvable groups
-NonsolvableOrders:=[ 60, 120, 168, 180, 240, 300, 336, 360, 420, 480, 504, 540, 600, 660, 672, 
-  720, 780, 840, 900, 960, 1008, 1020, 1080, 1092, 1140, 1176, 1200, 1260, 
-  1320, 1344, 1380, 1440, 1500, 1512, 1560, 1620, 1680, 1740, 1800, 1848, 
-  1860, 1920, 1980 ];
-
 PPart:=function(n,p) #returns p-part of n
 	if n=0 then
 		return infinity;
@@ -1407,6 +1398,15 @@ end;
 contrib:=function(q) #returns contribution matrix of given decomposition matrix
 	return ComplexConjugate(q)*(TransposedMat(q)*ComplexConjugate(q))^-1*TransposedMat(q);
 end;
+
+#the pairs (a,b) such that PrimitiveGroup(a,b) is a sporadic transitive linear group of degree b (appearing in Hering's classification)
+SporLinGroups:=[[25,15],[25,18],[25,19],[49,25],[49,29],[121,39],[121,42],[121,56],[121,57],[19^2,86],[23^2,59],[29^2,106],[29^2,110],[59^2,84],[16,20],[81,71],[81,90],[81,99],[81,130],[81,129],[81,124],[81,126],[81,127],[81,128],[3^6,396]];
+
+#orders <2000 of non-solvable groups
+NonsolvableOrders:=[ 60, 120, 168, 180, 240, 300, 336, 360, 420, 480, 504, 540, 600, 660, 672, 
+  720, 780, 840, 900, 960, 1008, 1020, 1080, 1092, 1140, 1176, 1200, 1260, 
+  1320, 1344, 1380, 1440, 1500, 1512, 1560, 1620, 1680, 1740, 1800, 1848, 
+  1860, 1920, 1980 ];
 
 #list of names of simple groups in the character table library
 CTSimple:=[ "A5", "L3(2)", "A6", "L2(8)", "L2(11)", "L2(13)", "L2(17)", "A7", "L2(19)", "L2(16)", "L3(3)", "U3(3)", "L2(23)", "L2(25)", "M11", 
