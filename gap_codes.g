@@ -1,22 +1,3 @@
-#InstallMethod( GroupByGenerators, #patch not necessary?
-        #[ IsGroup, IsMultiplicativeElementWithInverse ],
-        #function( G, id )
-        #return GroupWithGenerators( GeneratorsOfGroup( G ), id );
-        #end );
-        
-#behavior of ShallowCopy and StructuralCopy
-#a:=[[1]];; b:=a;; c:=ShallowCopy(a);; d:=StructuralCopy(a);; 
-#a[1]:=[2];; b; c; d; 
-#[ [ 2 ] ]
-#[ [ 1 ] ]
-#[ [ 1 ] ]
-
-#a:=[[1]];; b:=a;; c:=ShallowCopy(a);; d:=StructuralCopy(a);; 
-#a[1][1]:=3;; b; c; d;
-#[ [ 3 ] ]
-#[ [ 3 ] ]
-#[ [ 1 ] ]
-
 Codegree:=function(G,chi)
 	return Index(G,KernelOfCharacter(chi))/chi[1];
 end;
@@ -37,28 +18,6 @@ local T;
 	T:=List(TransposedMat(M));
 	T:=Permuted(T,g);
 	return TransposedMat(T);
-end;
-
-IsRegularPGroup2:=function(G) #incomplete
-local p,lc,e;
-	p:=PrimePGroup(G);
-	if p=2 then return IsAbelian(G); fi;
-	if Exponent(G)=p or NilpotencyClassOfGroup(G)<p then return true; fi;
-	lc:=LowerCentralSeriesOfGroup(G);
-	if Size(lc)<p or IsCyclic(lc[p-1]) then return true; fi; #Berkovich
-	e:=LogInt(Exponent(G),p);
-	if ForAny([1..e-1],i->Exponent(Omega(G,p,i))>p^i) then return false; fi;
-	return fail;
-end;
-
-IsRegularPGroup :=  function(g) #Robert Morse, also sufficient but not necessary
-	local p,e;
-	if not IsPGroup(g) then return fail; fi;
-	if IsAbelian(g) then return true; fi;
-	p := PrimePowersInt(Size(g));
-	e := p[2];
-	p := p[1];
-	return Index(g,Agemo(g,p,1))<p^p or Index(DerivedSubgroup(g),Agemo(DerivedSubgroup(g),p,1))<p^(p-1) or Size(Omega(g,p,1))<p^(p-1);
 end;
 
 InvPS:=function(a,d) #inverse of power series with coefficients a=(a_0,…) where a_0\ne 0, up to d coefficients
@@ -768,27 +727,6 @@ end;
 	#return SignPerm(MappingPermListList(hl,perm));
 #end;
 
-##replacement for CombineEQuotientCore which has a minor bug
-#CoreQuotient2Partition:=function(p,core,quot) #returns partition with given p-core and p-quotient
-#local s,hl,w,d,beta,a,b,i,j,x,abacus;
-	#if not IsECore(p,core) then Error(core," is not a ",p," core"); fi;
-	#s:=Size(core);
-	#hl:=List([1..s],i->core[i]+s-i); #first column hook lengths
-	#w:=Maximum(List(quot,Size)); #maximal number of beads on runners
-	#d:=p*w+((-s) mod p);
-	#beta:=hl+List(hl,i->d); #construct beta-size of large enough size = 0 (mod p)
-	#for i in [1..d] do Add(beta,d-i); od; 
-	#a:=List([0..p-1],i->Number(beta,x->x mod p=i)); #count beads on runners
-	#b:=List(quot,lam->List([1..Size(lam)],i->lam[i]+Size(lam)-i)); #beta-set from quot
-	#for i in [1..p] do 
-		#d:=a[i]-Size(b[i]);
-		#b[i]:=b[i]+List(b[i],j->d); #make beta-set b[i] long enough
-		#for j in [1..d] do Add(b[i],d-j); od;
-	#od;
-	#abacus:=Union(List([1..p],i->List(b[i],j->j*p+(i-1)))); #abacus of desired partition
-	#return Reversed(Filtered(List([1..Size(abacus)],i->abacus[i]-i+1),i->i>0));
-#end;
-
 #JantzenSchaper:=function(p,core,w) #returns decomposition matrix of the p-block with given core and weight w<4
 #local B,regB,hooks,lam,lam2,Hlam,h,pairs,c,dec,Co,i,j,k;
 	#B:=PartitionsWithCore(p,core,w); 
@@ -921,32 +859,6 @@ S:=Subgroup(D,List(GeneratorsOfGroup(ZG),g->g^p*g^(f*q)));
 epi:=NaturalHomomorphismByNormalSubgroupNC(D,S);
 return [Image(epi),Image(p*epi),Image(q*epi)];
 end;
-
-#CentralProductOld:=function(arg)
-#local G,H,D,f,f1,f2,S,g,M;
-#if Length(arg)=1 and IsList(arg[1]) then arg:=arg[1]; fi;
-#if Length(arg)=0 then return TrivialGroup(); fi;
-#if Length(arg)=1 then return arg[1]; fi;
-#G:=arg[1];
-#H:=arg[2];
-#D:=DirectProduct(G,H);
-#f:=IsomorphismGroups(Center(G),Center(H));
-#if f=fail then 
-	#if IsPGroup(Center(G)) and IsCyclic(Center(H)) then
-		#f:=IsomorphismGroups(Center(G),Filtered(AllSubgroups(Center(H)),M->Size(M)=Size(Center(G)))[1]);
-		#if f=fail then Error("Centers are not compatible"); fi;
-	#else
-		#f:=IsomorphismGroups(Filtered(AllSubgroups(Center(G)),M->Size(M)=Size(Center(H)))[1],Center(H));
-		#if f=fail then Error("Centers are not compatible"); fi;
-	#fi;
-#fi;
-#f1:=Embedding(D,1);
-#f2:=Embedding(D,2);
-#S:=Set(Center(G),g->g^(f1)*(g^(-1))^(f*f2));
-#Remove(arg,1);
-#arg[1]:=FactorGroup(D,Subgroup(D,S));
-#return CentralProduct(arg);
-#end;
 
 AllNondirectCentralProducts:=function(G,H) #returns all central products G*H except those of the form GxK with K\le H
 local ZG,ZH,exp,AG,AH,SG,SH,D,eG,eH,CPs,WG,WH,f,S,epi,g;
@@ -2473,5 +2385,3 @@ CTNonsolv:=[ "A5", "A5.2", "2xA5", "2.A5", "L3(2)", "3xA5", "2.A5.2", "2.Sym(5)"
   "U6(4)", "2.O10-(3)", "2E6(2)", "O8+(7)", "2E6(2).2", "2.2E6(2)", "S12(2)", "E6(2)", "2.O8+(7)", "2E6(2).3", "3.2E6(2)", "2F4(8)", "2.2E6(2).2", 
   "2^2.2E6(2)", "3.2E6(2).2", "6.2E6(2)", "2E6(2).3.2", "2^2.2E6(2).2", "6.2E6(2).2", "2^2.2E6(2).3", "(2^2x3).2E6(2)", "F3+", "(2^2x3).2E6(2).2", 
   "2^2.2E6(2).3.2", "F3+.2", "3.F3+", "3.F3+.2", "2^24.Co1", "2^1+24.Co1", "2^1+24.2.Co1", "B", "2.B", "M" ];
-
-LogTo("GAPlog.txt");
