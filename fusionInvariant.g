@@ -1,4 +1,6 @@
 LoadPackage("nconvex"); #this requires some libraries and compiled GAP packages
+#We use the fact that every indecomposable G-invariant character of P is a restriction of a generalized character.
+#This was proved in my paper "Fusion invariant character of p-groups".
 
 CCConjecture:=function(G,p)
 local P,ct,ctP,Rest,A,H,Ind,deg,c,x;
